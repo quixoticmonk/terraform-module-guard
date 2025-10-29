@@ -21,9 +21,7 @@ jobs:
         run: |
           echo "Running Checkov on pass.tf..."
           output=$(checkov -f examples/pass/pass.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
-          echo "$output"
-          failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
-          failures=$(echo "$failures" | head -1 | tr -d ' \n')
+          failures=$(echo "$output" | grep -c "FAILED for resource:" || echo "0")
           echo "Found $failures custom check failures (expected: 0)"
           if [ "$failures" != "0" ]; then
             echo "❌ Expected 0 custom check failures but found $failures"
@@ -34,9 +32,7 @@ jobs:
         run: |
           echo "Running Checkov on fail.tf..."
           output=$(checkov -f examples/fail/fail.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
-          echo "$output"
-          failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
-          failures=$(echo "$failures" | head -1 | tr -d ' \n')
+          failures=$(echo "$output" | grep -c "FAILED for resource:" || echo "0")
           echo "Found $failures custom check failures (expected: 3)"
           if [ "$failures" != "3" ]; then
             echo "❌ Expected 3 custom check failures but found $failures"
