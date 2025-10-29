@@ -25,11 +25,6 @@ allowed_sources:
 checkov -f main.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2
 ```
 
-### Sentinel
-```bash
-sentinel apply sentinel/module-source-policy.sentinel
-```
-
 ### Pre-commit
 Add to `.pre-commit-config.yaml`:
 ```yaml
