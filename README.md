@@ -1,4 +1,4 @@
-# Module Origin Validator [ work in progress ]
+# Module Origin Validator [work in progress]
 
 Policies to validate Terraform module sources across multiple policy engines.
 
@@ -9,11 +9,11 @@ Edit `allowed-sources.yaml` to customize allowed module sources:
 ```yaml
 allowed_sources:
   registry:
-    - "quixoticmonk/*"
+    - "cloudposse/*"
     - "terraform-aws-modules/*" 
     - "aws-ia/*"
   git:
-    - "github.com/quixoticmonk/*"
+    - "github.com/cloudposse/*"
     - "github.com/terraform-aws-modules/*"
     - "github.com/aws-ia/*"
 ```
@@ -22,7 +22,7 @@ allowed_sources:
 
 ### Checkov
 ```bash
-checkov -f main.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2
+checkov -f main.tf --external-checks-dir checkov/ --check CKV_TF_MODULE_SOURCE
 ```
 
 ### Pre-commit
