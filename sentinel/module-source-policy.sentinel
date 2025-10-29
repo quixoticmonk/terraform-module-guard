@@ -2,13 +2,13 @@ import "tfplan/v2" as tfplan
 import "strings"
 
 allowed_registry_sources = [
-    "quixoticmonk/",
+    "cloudposse/",
     "terraform-aws-modules/",
     "aws-ia/",
 ]
 
 allowed_git_sources = [
-    "github.com/quixoticmonk/",
+    "github.com/cloudposse/",
     "github.com/terraform-aws-modules/",
     "github.com/aws-ia/",
 ]
