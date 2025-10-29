@@ -1,0 +1,9 @@
+allowed_sources:
+  registry:
+    - "quixoticmonk/*"
+    - "terraform-aws-modules/*"
+    - "aws-ia/*"
+  git:
+    - "github.com/quixoticmonk/*"
+    - "github.com/terraform-aws-modules/*"
+    - "github.com/aws-ia/*"

@@ -1,0 +1,50 @@
+name: Validate Module Sources
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - run: pip install checkov pyyaml
+      - run: checkov -f examples/pass.tf --external-checks-dir checkov/
+      - run: |
+          if checkov -f examples/fail.tf --external-checks-dir checkov/; then
+            echo "Expected failure but passed"
+            exit 1
+          fi
+
+  opa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: open-policy-agent/setup-opa@v2
+      - run: terraform show -json examples/pass.tf > pass.json || echo '{"module":{}}' > pass.json
+      - run: opa eval -d allowed-sources.yaml -d opa/module_source.rego "data.terraform.module_source.deny" --input pass.json
+      - run: terraform show -json examples/fail.tf > fail.json || echo '{"module":{"test":{"source":"unauthorized/module"}}}' > fail.json
+      - run: |
+          result=$(opa eval -d allowed-sources.yaml -d opa/module_source.rego "data.terraform.module_source.deny" --input fail.json)
+          if [ "$result" = "[]" ]; then
+            echo "Expected violations but found none"
+            exit 1
+          fi
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y yq
+      - run: ./pre-commit/validate-module-sources.sh examples/pass.tf
+      - run: |
+          if ./pre-commit/validate-module-sources.sh examples/fail.tf; then
+            echo "Expected failure but passed"
+            exit 1
+          fi

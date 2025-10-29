@@ -1,0 +1,5 @@
+- id: validate-module-sources
+  name: Validate Terraform module sources
+  entry: pre-commit/validate-module-sources.sh
+  language: script
+  files: \.tf$
