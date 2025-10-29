@@ -17,22 +17,28 @@ jobs:
       - run: pip install checkov pyyaml
       - name: Test pass.tf (should have 0 custom check failures)
         run: |
+          echo "Running Checkov on pass.tf..."
           output=$(checkov -f examples/pass/pass.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
+          echo "$output"
           failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
-          echo "Found $failures custom check failures"
+          echo "Found $failures custom check failures (expected: 0)"
           if [ "$failures" -ne "0" ]; then
-            echo "Expected 0 custom check failures but found $failures"
+            echo "❌ Expected 0 custom check failures but found $failures"
             exit 1
           fi
+          echo "✅ Pass test successful"
       - name: Test fail.tf (should have 3 custom check failures)
         run: |
+          echo "Running Checkov on fail.tf..."
           output=$(checkov -f examples/fail/fail.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
+          echo "$output"
           failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
-          echo "Found $failures custom check failures"
+          echo "Found $failures custom check failures (expected: 3)"
           if [ "$failures" -ne "3" ]; then
-            echo "Expected 3 custom check failures but found $failures"
+            echo "❌ Expected 3 custom check failures but found $failures"
             exit 1
           fi
+          echo "✅ Fail test successful"
 
   pre-commit:
     runs-on: ubuntu-latest
@@ -41,12 +47,26 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y yq
       - run: chmod +x ./pre-commit/validate-module-sources.sh
       - name: Test pass.tf (should have 0 violations)
-        run: ./pre-commit/validate-module-sources.sh examples/pass/pass.tf
-      - name: Test fail.tf (should have 3 violations)
         run: |
-          output=$(./pre-commit/validate-module-sources.sh examples/fail/fail.tf 2>&1 || true)
+          echo "Running pre-commit script on pass.tf..."
+          output=$(./pre-commit/validate-module-sources.sh examples/pass/pass.tf 2>&1 || true)
+          echo "$output"
           violations=$(echo "$output" | grep -c "ERROR:" || echo "0")
-          if [ "$violations" -ne "3" ]; then
-            echo "Expected 3 violations but found $violations"
+          echo "Found $violations violations (expected: 0)"
+          if [ "$violations" -ne "0" ]; then
+            echo "❌ Expected 0 violations but found $violations"
             exit 1
           fi
+          echo "✅ Pass test successful"
+      - name: Test fail.tf (should have 3 violations)
+        run: |
+          echo "Running pre-commit script on fail.tf..."
+          output=$(./pre-commit/validate-module-sources.sh examples/fail/fail.tf 2>&1 || true)
+          echo "$output"
+          violations=$(echo "$output" | grep -c "ERROR:" || echo "0")
+          echo "Found $violations violations (expected: 3)"
+          if [ "$violations" -ne "3" ]; then
+            echo "❌ Expected 3 violations but found $violations"
+            exit 1
+          fi
+          echo "✅ Fail test successful"
