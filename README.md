@@ -1,4 +1,4 @@
-# Module Origin Validator
+# Module Origin Validator [ work in progress ]
 
 Policies to validate Terraform module sources across multiple policy engines.
 
