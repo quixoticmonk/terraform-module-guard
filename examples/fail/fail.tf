@@ -13,3 +13,9 @@ module "quixoticmonk_module" {
 module "unauthorized_git" {
   source = "git::github.com/quixoticmonk/terraform-aws-glue.git?ref=main"
 }
+
+# This should PASS - allowed source
+module "allowed_module" {
+  source = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
+}
