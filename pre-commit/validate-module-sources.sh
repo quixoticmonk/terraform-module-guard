@@ -23,12 +23,14 @@ check_source() {
         git_url="${git_url%%\?*}"
         git_url="${git_url%%//*}"
         while IFS= read -r allowed; do
-            allowed="${allowed//\*/}"  # Remove * from pattern
+            # Convert pattern like "github.com/cloudposse/*" to "github.com/cloudposse/"
+            allowed="${allowed/\*/}"
             [[ $git_url == $allowed* ]] && return 0
         done <<< "$git_sources"
     else
         while IFS= read -r allowed; do
-            allowed="${allowed//\*/}"  # Remove * from pattern  
+            # Convert pattern like "terraform-aws-modules/*" to "terraform-aws-modules/"
+            allowed="${allowed/\*/}"
             [[ $source == $allowed* ]] && return 0
         done <<< "$registry_sources"
     fi
