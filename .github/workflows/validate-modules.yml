@@ -21,8 +21,9 @@ jobs:
           output=$(checkov -f examples/pass/pass.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
           echo "$output"
           failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
+          failures=$(echo "$failures" | head -1 | tr -d ' \n')
           echo "Found $failures custom check failures (expected: 0)"
-          if [ "$failures" -ne "0" ]; then
+          if [ "$failures" != "0" ]; then
             echo "❌ Expected 0 custom check failures but found $failures"
             exit 1
           fi
@@ -33,8 +34,9 @@ jobs:
           output=$(checkov -f examples/fail/fail.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
           echo "$output"
           failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
+          failures=$(echo "$failures" | head -1 | tr -d ' \n')
           echo "Found $failures custom check failures (expected: 3)"
-          if [ "$failures" -ne "3" ]; then
+          if [ "$failures" != "3" ]; then
             echo "❌ Expected 3 custom check failures but found $failures"
             exit 1
           fi
@@ -44,7 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y yq
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
       - run: chmod +x ./pre-commit/validate-module-sources.sh
       - name: Test pass.tf (should have 0 violations)
         run: |
@@ -52,8 +57,9 @@ jobs:
           output=$(./pre-commit/validate-module-sources.sh examples/pass/pass.tf 2>&1 || true)
           echo "$output"
           violations=$(echo "$output" | grep -c "ERROR:" || echo "0")
+          violations=$(echo "$violations" | head -1 | tr -d ' \n')
           echo "Found $violations violations (expected: 0)"
-          if [ "$violations" -ne "0" ]; then
+          if [ "$violations" != "0" ]; then
             echo "❌ Expected 0 violations but found $violations"
             exit 1
           fi
@@ -64,8 +70,9 @@ jobs:
           output=$(./pre-commit/validate-module-sources.sh examples/fail/fail.tf 2>&1 || true)
           echo "$output"
           violations=$(echo "$output" | grep -c "ERROR:" || echo "0")
+          violations=$(echo "$violations" | head -1 | tr -d ' \n')
           echo "Found $violations violations (expected: 3)"
-          if [ "$violations" -ne "3" ]; then
+          if [ "$violations" != "3" ]; then
             echo "❌ Expected 3 violations but found $violations"
             exit 1
           fi
