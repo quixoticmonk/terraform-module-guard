@@ -18,15 +18,18 @@ check_source() {
     
     if [[ $source == git::* ]]; then
         local git_url="${source#git::}"
+        git_url="${git_url#https://}"
+        git_url="${git_url#ssh://}"
         git_url="${git_url%%\?*}"
+        git_url="${git_url%%//*}"
         while IFS= read -r allowed; do
-            allowed_prefix="${allowed%/*}"
-            [[ $git_url == $allowed_prefix* ]] && return 0
+            allowed="${allowed%/*}"
+            [[ $git_url == $allowed* ]] && return 0
         done <<< "$git_sources"
     else
         while IFS= read -r allowed; do
-            allowed_prefix="${allowed%/*}"
-            [[ $source == $allowed_prefix* ]] && return 0
+            allowed="${allowed%/*}"
+            [[ $source == $allowed* ]] && return 0
         done <<< "$registry_sources"
     fi
     return 1
