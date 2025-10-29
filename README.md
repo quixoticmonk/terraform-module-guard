@@ -22,7 +22,11 @@ allowed_sources:
 
 ### Checkov
 ```bash
+# Run specific check
 checkov -f main.tf --external-checks-dir checkov/ --check CKV_TF_MODULE_SOURCE
+
+# Run all checks (includes custom check)
+checkov -f main.tf --external-checks-dir checkov/
 ```
 
 ### Pre-commit
