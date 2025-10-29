@@ -23,12 +23,12 @@ check_source() {
         git_url="${git_url%%\?*}"
         git_url="${git_url%%//*}"
         while IFS= read -r allowed; do
-            allowed="${allowed%/*}"
+            allowed="${allowed//\*/}"  # Remove * from pattern
             [[ $git_url == $allowed* ]] && return 0
         done <<< "$git_sources"
     else
         while IFS= read -r allowed; do
-            allowed="${allowed%/*}"
+            allowed="${allowed//\*/}"  # Remove * from pattern  
             [[ $source == $allowed* ]] && return 0
         done <<< "$registry_sources"
     fi
