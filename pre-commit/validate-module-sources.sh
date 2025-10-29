@@ -13,18 +13,20 @@ check_source() {
     local source="$1"
     local registry_sources git_sources
     
-    registry_sources=$(yq '.allowed_sources.registry[]' "$CONFIG_FILE" | sed 's/\*$//')
-    git_sources=$(yq '.allowed_sources.git[]' "$CONFIG_FILE" | sed 's/\*$//')
+    registry_sources=$(yq '.allowed_sources.registry[]' "$CONFIG_FILE")
+    git_sources=$(yq '.allowed_sources.git[]' "$CONFIG_FILE")
     
     if [[ $source == git::* ]]; then
         local git_url="${source#git::}"
         git_url="${git_url%%\?*}"
         while IFS= read -r allowed; do
-            [[ $git_url == $allowed* ]] && return 0
+            allowed_prefix="${allowed%/*}"
+            [[ $git_url == $allowed_prefix* ]] && return 0
         done <<< "$git_sources"
     else
         while IFS= read -r allowed; do
-            [[ $source == $allowed* ]] && return 0
+            allowed_prefix="${allowed%/*}"
+            [[ $source == $allowed_prefix* ]] && return 0
         done <<< "$registry_sources"
     fi
     return 1

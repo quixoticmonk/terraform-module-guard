@@ -1,9 +1,9 @@
 allowed_sources:
   registry:
-    - "quixoticmonk/*"
+    - "cloudposse/*"
     - "terraform-aws-modules/*"
     - "aws-ia/*"
   git:
-    - "github.com/quixoticmonk/*"
+    - "github.com/cloudposse/*"
     - "github.com/terraform-aws-modules/*"
     - "github.com/aws-ia/*"

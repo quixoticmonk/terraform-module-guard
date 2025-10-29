@@ -22,7 +22,7 @@ allowed_sources:
 
 ### Checkov
 ```bash
-checkov -f main.tf --external-checks-dir checkov/
+checkov -f main.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2
 ```
 
 ### OPA

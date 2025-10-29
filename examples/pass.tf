@@ -11,7 +11,7 @@ module "security_group" {
 }
 
 module "custom_module" {
-  source = "quixoticmonk/example/aws"
+  source = "cloudposse/vpc/aws"
   version = "~> 1.0"
 }
 
@@ -20,5 +20,5 @@ module "git_module" {
 }
 
 module "git_custom" {
-  source = "git::github.com/quixoticmonk/terraform-modules.git//vpc?ref=main"
+  source = "git::github.com/cloudposse/terraform-aws-vpc.git//vpc?ref=main"
 }
