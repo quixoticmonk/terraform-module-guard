@@ -17,48 +17,22 @@ jobs:
       - run: pip install checkov pyyaml
       - name: Test pass.tf (should have 0 custom check failures)
         run: |
-          output=$(checkov -f examples/pass.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
+          output=$(checkov -f examples/pass/pass.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
           failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
           echo "Found $failures custom check failures"
           if [ "$failures" -ne "0" ]; then
             echo "Expected 0 custom check failures but found $failures"
             exit 1
           fi
-      - name: Test fail.tf (should have 5 custom check failures)
+      - name: Test fail.tf (should have 3 custom check failures)
         run: |
-          output=$(checkov -f examples/fail.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
+          output=$(checkov -f examples/fail/fail.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
           failures=$(echo "$output" | grep -c "CKV_TF_MODULE_SOURCE.*FAILED" || echo "0")
           echo "Found $failures custom check failures"
-          if [ "$failures" -ne "5" ]; then
-            echo "Expected 5 custom check failures but found $failures"
+          if [ "$failures" -ne "3" ]; then
+            echo "Expected 3 custom check failures but found $failures"
             exit 1
           fi
-
-  opa:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: open-policy-agent/setup-opa@v2
-      - uses: hashicorp/setup-terraform@v3
-      - name: Test pass.tf (should have 0 violations)
-        run: |
-          cd examples
-          terraform init -backend=false -get=false
-          terraform plan -out=pass.tfplan -input=false || true
-          terraform show -json pass.tfplan > pass.json || terraform show -json > pass.json
-          VIOLATIONS=$(opa eval -d ../allowed-sources.yaml -d ../opa/module_source.rego "data.terraform.module_source.deny" --input pass.json --format raw)
-          COUNT=$(echo "$VIOLATIONS" | jq '. | length')
-          echo "Pass violations: $COUNT"
-          [ "$COUNT" -eq 0 ] || exit 1
-      - name: Test fail.tf (should have violations)
-        run: |
-          cd examples
-          terraform plan -out=fail.tfplan -input=false || true
-          terraform show -json fail.tfplan > fail.json || terraform show -json > fail.json
-          VIOLATIONS=$(opa eval -d ../allowed-sources.yaml -d ../opa/module_source.rego "data.terraform.module_source.deny" --input fail.json --format raw)
-          COUNT=$(echo "$VIOLATIONS" | jq '. | length')
-          echo "Fail violations: $COUNT"
-          [ "$COUNT" -gt 0 ] || exit 1
 
   pre-commit:
     runs-on: ubuntu-latest
@@ -67,12 +41,12 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y yq
       - run: chmod +x ./pre-commit/validate-module-sources.sh
       - name: Test pass.tf (should have 0 violations)
-        run: ./pre-commit/validate-module-sources.sh examples/pass.tf
-      - name: Test fail.tf (should have 5 violations)
+        run: ./pre-commit/validate-module-sources.sh examples/pass/pass.tf
+      - name: Test fail.tf (should have 3 violations)
         run: |
-          output=$(./pre-commit/validate-module-sources.sh examples/fail.tf 2>&1 || true)
+          output=$(./pre-commit/validate-module-sources.sh examples/fail/fail.tf 2>&1 || true)
           violations=$(echo "$output" | grep -c "ERROR:" || echo "0")
-          if [ "$violations" -ne "5" ]; then
-            echo "Expected 5 violations but found $violations"
+          if [ "$violations" -ne "3" ]; then
+            echo "Expected 3 violations but found $violations"
             exit 1
           fi

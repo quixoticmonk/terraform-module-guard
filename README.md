@@ -25,11 +25,6 @@ allowed_sources:
 checkov -f main.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2
 ```
 
-### OPA
-```bash
-opa eval -d allowed-sources.yaml -d opa/module_source.rego "data.terraform.module_source.deny" --input terraform.json
-```
-
 ### Sentinel
 ```bash
 sentinel apply sentinel/module-source-policy.sentinel
@@ -50,5 +45,5 @@ repos:
 
 ## Examples
 
-- `examples/pass.tf` - Module sources that should pass validation
-- `examples/fail.tf` - Module sources that should fail validation
+- `examples/pass/pass.tf` - Module sources that should pass validation
+- `examples/fail/fail.tf` - Module sources that should fail validation
