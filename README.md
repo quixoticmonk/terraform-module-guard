@@ -20,6 +20,19 @@ allowed_sources:
 
 ## Usage
 
+### Sentinel (HCP Terraform)
+The Sentinel policy validates module sources in HCP Terraform runs:
+
+![Sentinel Policy Run](static/images/sentinel_run.png)
+
+```hcl
+# sentinel.hcl
+policy "module-source-policy" {
+    source = "./module-source-policy.sentinel"
+    enforcement_level = "hard-mandatory"
+}
+```
+
 ### Checkov
 ```bash
 # Run specific check
