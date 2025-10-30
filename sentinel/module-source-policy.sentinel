@@ -33,8 +33,46 @@ is_allowed_source = func(source) {
     }
 }
 
-main = rule {
-    all tfplan.module_calls as _, call {
-        is_allowed_source(call.source)
+validate_modules = func() {
+    violations = []
+    
+    # Access modules from HCP Terraform raw configuration
+    raw = tfplan.raw else {}
+    raw_config = raw.configuration else {}
+    raw_root = raw_config.root_module else {}
+    module_calls = raw_root.module_calls else {}
+    
+    for module_calls as name, call {
+        source = call.source else ""
+        
+        if source != "" {
+            if is_allowed_source(source) {
+                print("✅ PASS: Module '" + name + "' uses allowed source: " + source)
+            } else {
+                print("❌ FAIL: Module '" + name + "' uses unauthorized source: " + source)
+                violations = violations + [name]
+            }
+        }
     }
+    
+    if length(violations) > 0 {
+        print("\n🚫 POLICY FAILED - Unauthorized module sources detected!")
+        print("Allowed registry sources:")
+        for allowed_registry_sources as source {
+            print("  - " + source + "*")
+        }
+        print("Allowed git sources:")
+        for allowed_git_sources as source {
+            print("  - git::" + source + "*")
+        }
+        print("\nTo fix: Update module sources to use only allowed sources listed above.")
+        return false
+    } else {
+        print("\n✅ POLICY PASSED - All module sources are authorized")
+        return true
+    }
+}
+
+main = rule {
+    validate_modules()
 }
