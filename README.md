@@ -4,7 +4,7 @@ Policies to validate Terraform module sources across multiple policy engines.
 
 ## Configuration
 
-Edit `allowed-sources.yaml` to customize allowed module sources:
+Edit `allowed-sources.yaml` to customize allowed module sources. Sentinel policy has the source list inline.
 
 ```yaml
 allowed_sources:
