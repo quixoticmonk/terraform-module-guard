@@ -1,0 +1,20 @@
+{
+  "planned_values": {
+    "root_module": {
+      "module_calls": {
+        "hashicorp_vault": {
+          "source": "hashicorp/vault/aws"
+        },
+        "quixoticmonk_module": {
+          "source": "quixoticmonk/glue/aws"
+        },
+        "unauthorized_git": {
+          "source": "git::github.com/quixoticmonk/terraform-aws-glue.git?ref=main"
+        },
+        "allowed_module": {
+          "source": "terraform-aws-modules/vpc/aws"
+        }
+      }
+    }
+  }
+}

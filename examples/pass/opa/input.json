@@ -1,0 +1,23 @@
+{
+  "planned_values": {
+    "root_module": {
+      "module_calls": {
+        "vpc": {
+          "source": "terraform-aws-modules/vpc/aws"
+        },
+        "security_group": {
+          "source": "aws-ia/security-group/aws"
+        },
+        "custom_module": {
+          "source": "cloudposse/vpc/aws"
+        },
+        "git_module": {
+          "source": "git::github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v5.0.0"
+        },
+        "git_custom": {
+          "source": "git::github.com/cloudposse/terraform-aws-vpc.git//vpc?ref=main"
+        }
+      }
+    }
+  }
+}

@@ -77,3 +77,17 @@ jobs:
             exit 1
           fi
           echo "✅ Fail test successful"
+
+  opa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/v0.58.0/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/
+      - name: Test OPA policy
+        run: |
+          cd examples
+          ./test-opa.sh
