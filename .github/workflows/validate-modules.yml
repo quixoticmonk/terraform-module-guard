@@ -89,5 +89,6 @@ jobs:
           sudo mv opa_binary /usr/local/bin/opa
       - name: Test OPA policy
         run: |
+          chmod +x examples/test-opa.sh
           cd examples
           ./test-opa.sh
