@@ -19,9 +19,8 @@ check_source() {
     if [[ $source == git::* ]]; then
         local git_url="${source#git::}"
         git_url="${git_url#https://}"
-        git_url="${git_url#ssh://}"
+        git_url="${git_url#ssh://git@}"
         git_url="${git_url%%\?*}"
-        git_url="${git_url%%//*}"
         while IFS= read -r allowed; do
             # Convert pattern like "github.com/cloudposse/*" to "github.com/cloudposse/"
             allowed="${allowed/\*/}"

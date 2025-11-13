@@ -26,7 +26,10 @@ class ModuleSourceAllowlist(BaseModuleCheck):
         
         # Check git sources
         if source_url.startswith('git::'):
-            git_url = source_url.replace('git::', '').split('?')[0]
+            git_url = source_url.replace('git::', '')
+            # Handle both SSH and HTTPS formats
+            git_url = git_url.replace('ssh://git@', '').replace('https://', '')
+            git_url = git_url.split('?')[0]
             for allowed in allowed_sources['git']:
                 if git_url.startswith(allowed.replace('*', '')):
                     return CheckResult.PASSED
