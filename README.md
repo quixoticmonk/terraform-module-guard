@@ -1,4 +1,5 @@
-# Module Origin Validator
+# Module Origin Validator [work in progress]
+
 Policies to validate Terraform module sources across multiple policy engines.
 
 ## Configuration
@@ -47,7 +48,7 @@ checkov -f main.tf --external-checks-dir checkov/
 cd examples && ./test-opa.sh
 
 # Run policy against Terraform plan JSON
-opa eval -d opa/module_source_policy.rego -i plan.json "data.terraform.module_sources.deny"
+opa exec --decision terraform/module_sources/deny --bundle opa/ --fail-non-empty plan.json
 ```
 
 ### Pre-commit
@@ -65,7 +66,9 @@ repos:
 
 ## Examples
 
-- `examples/pass/pass.tf` - Module sources that should pass validation
-- `examples/fail/fail.tf` - Module sources that should fail validation
-- `examples/pass/opa/input.json` - OPA test input for passing cases
-- `examples/fail/opa/input.json` - OPA test input for failing cases
+- `examples/pass/pass.tf` - Module sources that should pass validation (5 modules)
+- `examples/fail/fail.tf` - Module sources that should fail validation (4 unauthorized + 1 allowed)
+- `examples/pass/opa/input.json` - Complete Terraform plan JSON for passing cases
+- `examples/fail/opa/input.json` - Complete Terraform plan JSON for failing cases
+- `examples/pass/plan.json` - Source Terraform plan file
+- `examples/fail/plan.json` - Source Terraform plan file

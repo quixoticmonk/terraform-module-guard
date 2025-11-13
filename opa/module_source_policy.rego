@@ -20,9 +20,12 @@ allowed_git_sources := [
 is_allowed_source(source) if {
     startswith(source, "git::")
     git_url := trim_prefix(source, "git::")
-    clean_url := split(git_url, "?")[0]
+    # Remove ssh:// or https:// prefix
+    clean_url := regex.replace(git_url, "^(ssh://git@|https://)", "")
+    # Remove query parameters
+    base_url := split(clean_url, "?")[0]
     some allowed in allowed_git_sources
-    startswith(clean_url, allowed)
+    startswith(base_url, allowed)
 }
 
 is_allowed_source(source) if {
@@ -33,7 +36,7 @@ is_allowed_source(source) if {
 
 # Deny rule - fails if any module source is not allowed
 deny contains msg if {
-    some module_name, module_config in input.planned_values.root_module.module_calls
+    some module_name, module_config in input.configuration.root_module.module_calls
     source := module_config.source
     not is_allowed_source(source)
     msg := sprintf("Module '%s' uses disallowed source: %s", [module_name, source])

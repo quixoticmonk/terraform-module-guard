@@ -1,21 +1,38 @@
-# These module sources should FAIL validation - using real modules not in allowed list
+# These module sources should FAIL validation
 
-module "hashicorp_vault" {
-  source  = "hashicorp/vault/aws"
-  version = "~> 1.0"
+# Registry modules (NOT in allowed sources)
+module "quixoticmonk_glue_1" {
+  source = "quixoticmonk/glue/aws"
+  version = "~> 0.0.3"
 }
 
-module "quixoticmonk_module" {
-  source  = "quixoticmonk/glue/aws"
-  version = "~> 2.0"
+module "quixoticmonk_glue_2" {
+  source = "quixoticmonk/glue/aws"
+  version = "~> 0.0.3"
 }
 
-module "unauthorized_git" {
-  source = "git::github.com/quixoticmonk/terraform-aws-glue.git?ref=main"
+module "docker_secret" {
+  source  = "bendrucker/docker-secret/kubernetes"
+  version = "1.0.0"
+  
+  name      = "my-docker-secret"
+  namespace = "default"
+  registries = {
+    "docker.io" = {
+      username = "user"
+      password = "pass"
+      email    = "user@example.com"
+    }
+  }
+}
+
+# Git sources (NOT in allowed sources)
+module "git_quixoticmonk_s3" {
+  source = "git::ssh://git@github.com/quixoticmonk/terraform-aws-s3.git?ref=main"
 }
 
 # This should PASS - allowed source
 module "allowed_module" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
 }

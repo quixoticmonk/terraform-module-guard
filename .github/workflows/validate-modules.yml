@@ -29,15 +29,15 @@ jobs:
             exit 1
           fi
           echo "✅ Pass test successful"
-      - name: Test fail.tf (should have 3 custom check failures)
+      - name: Test fail.tf (should have 4 custom check failures)
         run: |
           echo "Running Checkov on fail.tf..."
           output=$(checkov -f examples/fail/fail.tf --external-checks-dir checkov/ --skip-check CKV_TF_1,CKV_TF_2 --compact || true)
           failures=$(echo "$output" | grep -c "FAILED for resource:" || echo "0")
           failures=$(echo "$failures" | head -1 | tr -d '\n')
-          echo "Found $failures custom check failures (expected: 3)"
-          if [ "$failures" != "3" ]; then
-            echo "❌ Expected 3 custom check failures but found $failures"
+          echo "Found $failures custom check failures (expected: 4)"
+          if [ "$failures" != "4" ]; then
+            echo "❌ Expected 4 custom check failures but found $failures"
             exit 1
           fi
           echo "✅ Fail test successful"
@@ -64,16 +64,16 @@ jobs:
             exit 1
           fi
           echo "✅ Pass test successful"
-      - name: Test fail.tf (should have 3 violations)
+      - name: Test fail.tf (should have 4 violations)
         run: |
           echo "Running pre-commit script on fail.tf..."
           output=$(./pre-commit/validate-module-sources.sh examples/fail/fail.tf 2>&1 || true)
           echo "$output"
           violations=$(echo "$output" | grep -c "ERROR:" || echo "0")
           violations=$(echo "$violations" | head -1 | tr -d ' \n')
-          echo "Found $violations violations (expected: 3)"
-          if [ "$violations" != "3" ]; then
-            echo "❌ Expected 3 violations but found $violations"
+          echo "Found $violations violations (expected: 4)"
+          if [ "$violations" != "4" ]; then
+            echo "❌ Expected 4 violations but found $violations"
             exit 1
           fi
           echo "✅ Fail test successful"

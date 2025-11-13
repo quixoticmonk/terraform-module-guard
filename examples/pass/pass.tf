@@ -1,24 +1,26 @@
 # These module sources should PASS validation
 
+# Registry modules (allowed sources)
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
 }
 
-module "security_group" {
-  source = "aws-ia/security-group/aws"
-  version = "~> 1.0"
+module "label" {
+  source  = "aws-ia/label/aws" 
+  version = "~> 0.0.5"
 }
 
-module "custom_module" {
-  source = "cloudposse/vpc/aws"
-  version = "~> 1.0"
+module "cloudposse_module" {
+  source  = "cloudposse/label/null"
+  version = "~> 0.25.0"
 }
 
-module "git_module" {
-  source = "git::github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v5.0.0"
+# Git sources (allowed) - using SSH
+module "git_terraform_aws" {
+  source = "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=v4.0.0"
 }
 
-module "git_custom" {
-  source = "git::github.com/cloudposse/terraform-aws-vpc.git//vpc?ref=main"
+module "git_cloudposse" {
+  source = "git::ssh://git@github.com/cloudposse/terraform-null-label.git?ref=0.25.0"
 }
